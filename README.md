@@ -1,4 +1,4 @@
-# Tauri + Angular
+# Tauri + Angular 19, PrimeNG 19, TailwindCSS
 
 This template should help get you started developing with Tauri and Angular.
 

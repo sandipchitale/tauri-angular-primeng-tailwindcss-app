@@ -1,24 +1,44 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { invoke } from "@tauri-apps/api/core";
+import {AfterViewInit, Component, Inject} from '@angular/core';
+import {CommonModule, DOCUMENT} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+
+
+import {ToolbarModule} from 'primeng/toolbar';
+import {ButtonModule} from 'primeng/button';
+import {ToggleButtonModule} from 'primeng/togglebutton';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+    selector: 'app-root',
+    standalone: true,
+    imports: [CommonModule, ButtonModule, FormsModule, ToggleButtonModule, ToolbarModule],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
-export class AppComponent {
-  greetingMessage = "";
+export class AppComponent implements AfterViewInit {
+    _darkTheme = false;
 
-  greet(event: SubmitEvent, name: string): void {
-    event.preventDefault();
+    constructor(@Inject(DOCUMENT) private document: Document) {
+    }
 
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    invoke<string>("greet", { name }).then((text) => {
-      this.greetingMessage = text;
-    });
-  }
+    ngAfterViewInit(): void {
+        // initial theme to match system theme
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+            this.darkTheme = false;
+        } else {
+            this.darkTheme = true;
+        }
+    }
+
+    get darkTheme(): boolean {
+        return this._darkTheme;
+    }
+
+    set darkTheme(value: boolean) {
+        this._darkTheme = value;
+        if (this._darkTheme) {
+            this.document.querySelector('html')?.classList.add('dark-theme');
+        } else {
+            this.document.querySelector('html')?.classList.remove('dark-theme');
+        }
+    }
 }
